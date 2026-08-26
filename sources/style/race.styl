@@ -1,0 +1,114 @@
+.menu-trigger
+.map-trigger
+    display none !important
+
+.race-launcher
+    position fixed
+    inset 0
+    z-index 10000
+    display flex
+    align-items center
+    justify-content center
+    padding 24px
+    color #fff
+    background radial-gradient(circle at 50% 35%, alpha(#6e566f, 0.84), alpha(#171119, 0.97))
+    transition opacity 0.45s ease, visibility 0.45s ease
+
+    &.is-hidden
+        opacity 0
+        visibility hidden
+        pointer-events none
+
+    .race-launcher-card
+        width min(680px, 100%)
+        padding 36px
+        border 1px solid alpha(#fff, 0.18)
+        border-radius 24px
+        text-align center
+        background alpha(#211924, 0.88)
+        box-shadow 0 24px 80px alpha(#000, 0.45)
+
+    .eyebrow
+        color #d6ff8f
+        font-size 12px
+        font-weight 900
+        letter-spacing 0.2em
+
+    h1
+        margin 6px 0 24px
+        font-size clamp(32px, 7vw, 58px)
+        font-family "Amatic SC", sans-serif
+
+    .paint-choices
+        display none
+        grid-template-columns repeat(3, 1fr)
+        gap 12px
+
+    &.is-ready
+        .loading-label
+            display none
+
+        .paint-choices
+            display grid
+
+    .paint-choice
+        display flex
+        align-items center
+        gap 10px
+        padding 12px
+        border 1px solid alpha(#fff, 0.2)
+        border-radius 12px
+        background alpha(#fff, 0.05)
+        font-weight 700
+        transition transform 0.18s ease, border-color 0.18s ease
+
+        &:hover
+        &:focus-visible
+            transform translateY(-2px)
+            border-color alpha(#fff, 0.8)
+
+        span
+            width 30px
+            height 30px
+            border-radius 50%
+            box-shadow inset 0 0 0 1px alpha(#fff, 0.3)
+
+        &.red span
+            background linear-gradient(135deg, #ff5364, #8e1734)
+        &.orange span
+            background linear-gradient(135deg, #ffb02e, #af0071)
+        &.white span
+            background linear-gradient(135deg, #fff, #aaa)
+        &.black span
+            background linear-gradient(135deg, #777, #111)
+        &.flames span
+            background linear-gradient(135deg, #ffe54f, #ff3d00 55%, #5c0018)
+        &.abyssal span
+            background radial-gradient(circle at 65% 30%, #fff 0 2%, #786cff 5%, #171338 45%, #05040c)
+
+    .start-hint
+        display none
+        margin-top 20px
+        color alpha(#fff, 0.65)
+        font-size 14px
+
+    &.is-ready .start-hint
+        display block
+
+@media only screen and (max-width 520px)
+    .race-launcher
+        .race-launcher-card
+            padding 26px 18px
+
+        .paint-choices
+            grid-template-columns repeat(2, 1fr)
+
+.circuit-end
+    .close
+        display none !important
+
+    .offline-element
+    .not-top-10
+    .input-group
+    .or
+        display none !important

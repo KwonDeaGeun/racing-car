@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race</title>
+    <meta name="description" content="A lightweight Three.js racing experience">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Nunito:wght@400;700;900&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="./style/index.styl">
+</head>
+<body>
+    <main class="game">
+        <canvas class="js-canvas"></canvas>
+
+        <section class="js-race-launcher race-launcher" aria-label="Choose your car color">
+            <div class="race-launcher-card">
+                <p class="eyebrow">READY TO RACE</p>
+                <h1>Choose your car</h1>
+                <p class="loading-label">Preparing the circuit…</p>
+                <div class="paint-choices" aria-label="Car colors">
+                    <button class="js-paint-choice paint-choice red" data-paint="red"><span></span>Red</button>
+                    <button class="js-paint-choice paint-choice orange" data-paint="orange"><span></span>Orange</button>
+                    <button class="js-paint-choice paint-choice white" data-paint="white"><span></span>White</button>
+                    <button class="js-paint-choice paint-choice black" data-paint="black"><span></span>Black</button>
+                    <button class="js-paint-choice paint-choice flames" data-paint="flames"><span></span>Flames</button>
+                    <button class="js-paint-choice paint-choice abyssal" data-paint="abyssal"><span></span>Abyssal</button>
+                </div>
+                <p class="start-hint">Selecting a color starts the race.</p>
+            </div>
+        </section>
+
+        <div class="js-touch-buttons touch-buttons">
+            <div class="js-overlay overlay"></div>
+            <div class="list">
+                <button data-name="interact" class="js-button interact">Interact</button>
+                <button data-name="unstuck" class="js-button unstuck">Unstuck</button>
+                <button data-name="previous" class="js-button previous"></button>
+                <button data-name="next" class="js-button next"></button>
+                <button data-name="open" class="js-button open"></button>
+                <button data-name="close" class="js-button close"></button>
+            </div>
+        </div>
+
+        <div class="js-modals modals">
+            <section class="js-modal modal circuit-end" data-name="circuit-end" data-dismissible="false" aria-label="Race result">
+                <div class="container">
+                    <div class="content">
+                        <div class="your-time">
+                            Your time
+                            <br><span class="js-time value">00:00:000</span>
+                        </div>
+                        <button class="js-button-restart button">Restart</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script type="module" src="./index.js"></script>
+</body>
+</html>
