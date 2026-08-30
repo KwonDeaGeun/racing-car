@@ -25,6 +25,9 @@ export class Nipple
         this.targetAngle = 0
         this.forward = true
         this.inRadiusLow = false
+        this.pointer = null
+        this.pointerOrigin = new THREE.Vector2()
+        this.planeY = 0.1
 
         this.setMeshes()
     }
@@ -119,12 +122,53 @@ export class Nipple
     setCoordinates(x, y, z, angle)
     {
         const clampedY = clamp(y - 0.25, 0.1, 0.65)
-        this.position.set(x, clampedY, z)
-        this.group.position.copy(this.position)
-        this.uniforms.position.value.copy(this.position)
+        this.planeY = clampedY
+
+        // Before a touch starts, keep the fallback position on the vehicle.
+        // While active, update() keeps the joystick anchored to the screen
+        // position where the touch started.
+        if(!this.active)
+        {
+            this.position.set(x, clampedY, z)
+            this.group.position.copy(this.position)
+            this.uniforms.position.value.copy(this.position)
+        }
 
         this.angle = angle
         this.mesh.rotation.y = - angle
+    }
+
+    getPointerIntersection(x, y)
+    {
+        const ndcPointer = new THREE.Vector2(
+            (x / this.game.viewport.width) * 2 - 1,
+            - ((y / this.game.viewport.height) * 2 - 1),
+        )
+        this.raycaster.setFromCamera(ndcPointer, this.game.view.defaultCamera)
+
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), - this.planeY)
+        return this.raycaster.ray.intersectPlane(plane, new THREE.Vector3())
+    }
+
+    updateFromScreenPointer()
+    {
+        if(!this.pointer)
+            return
+
+        const origin = this.getPointerIntersection(this.pointerOrigin.x, this.pointerOrigin.y)
+        const intersect = this.getPointerIntersection(this.pointer.current.x, this.pointer.current.y)
+
+        if(!origin || !intersect)
+            return
+
+        this.position.copy(origin)
+        this.group.position.copy(this.position)
+        this.uniforms.position.value.copy(this.position)
+
+        const distance = this.position.distanceTo(intersect)
+        this.targetAngle = Math.atan2(intersect.z - this.position.z, intersect.x - this.position.x)
+        this.progress = clamp((distance - this.progressRadiusLow) / (this.progressRadiusHigh - this.progressRadiusLow), 0, 1)
+        this.uniforms.progress.value = this.progress
     }
 
     updateFromPointer(pointer, action)
@@ -133,7 +177,16 @@ export class Nipple
         if(action.trigger === 'start')
         {
             if(pointer.touches.length == 1)
+            {
                 this.active = true
+                this.pointer = pointer
+                this.pointerOrigin.set(pointer.current.x, pointer.current.y)
+                this.targetAngle = this.angle
+                this.progress = 0
+                this.uniforms.progress.value = 0
+                this.inRadiusLow = true
+                this.updateFromScreenPointer()
+            }
         }
 
         // End
@@ -145,6 +198,7 @@ export class Nipple
                 this.events.trigger('tap')
 
             this.inRadiusLow = false
+            this.pointer = null
         }
 
         // Change
@@ -155,34 +209,10 @@ export class Nipple
                 // One finger => Handle it
                 if(pointer.touches.length == 1)
                 {
-                    // Intersect
-                    const ndcPointer = new THREE.Vector2(
-                        (pointer.current.x / this.game.viewport.width) * 2 - 1,
-                        - ((pointer.current.y / this.game.viewport.height) * 2 - 1),
-                    )
-                    this.raycaster.setFromCamera(ndcPointer, this.game.view.defaultCamera)
-
-                    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), - this.position.y)
-                    const intersect = new THREE.Vector3()
-                    this.raycaster.ray.intersectPlane(plane, intersect)
-
-                    // Distance
-                    const distance = this.position.distanceTo(intersect)
-
-                    // Target angle
-                    this.targetAngle = Math.atan2(intersect.z - this.position.z, intersect.x - this.position.x)
-
-                    // Progress
-                    this.progress = clamp((distance - this.progressRadiusLow) / (this.progressRadiusHigh - this.progressRadiusLow), 0, 1)
-                    this.uniforms.progress.value = this.progress
+                    this.updateFromScreenPointer()
 
                     // Tap
-                    if(action.trigger === 'start')
-                    {
-                        if(this.progress === 0)
-                            this.inRadiusLow = true
-                    }
-                    else if(action.trigger === 'change')
+                    if(action.trigger === 'change')
                     {
                         if(this.progress > 0)
                             this.inRadiusLow = false
@@ -192,6 +222,8 @@ export class Nipple
                 else
                 {
                     this.active = false
+                    this.inRadiusLow = false
+                    this.pointer = null
                 }
             }
         }
@@ -232,6 +264,9 @@ export class Nipple
     {
         if(this.active || this.animated)
         {
+            if(this.active)
+                this.updateFromScreenPointer()
+
             // Smallest angle and forward
             this.smallestAngle = smallestAngle(this.angle, this.targetAngle)
             let smallestAngleAbs = Math.abs(this.smallestAngle)
