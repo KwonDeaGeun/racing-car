@@ -92,8 +92,34 @@
         color alpha(#fff, 0.65)
         font-size 14px
 
+    .mobile-controls-guide
+        display none
+
     &.is-ready .start-hint
         display block
+
+@media (hover none) and (pointer coarse)
+    .race-launcher.is-ready
+        .mobile-controls-guide
+            display flex
+            flex-direction column
+            gap 3px
+            margin-top 18px
+            padding 12px 14px
+            border-radius 12px
+            color alpha(#fff, 0.72)
+            font-size 13px
+            line-height 1.4
+            background alpha(#fff, 0.06)
+
+            strong
+                color #d6ff8f
+                font-size 12px
+                font-weight 900
+                letter-spacing 0.08em
+
+        .start-hint
+            margin-top 12px
 
 @media only screen and (max-width 520px)
     .race-launcher
@@ -102,6 +128,29 @@
 
         .paint-choices
             grid-template-columns repeat(2, 1fr)
+
+@media only screen and (max-width 520px) and (max-height 700px)
+    .race-launcher
+        padding 12px
+
+        .race-launcher-card
+            padding 18px 14px
+
+        h1
+            margin-bottom 14px
+
+        .paint-choices
+            gap 8px
+
+        .paint-choice
+            padding 8px
+
+        .mobile-controls-guide
+            margin-top 10px
+            padding 8px 10px
+
+        .start-hint
+            margin-top 8px
 
 .circuit-end
     .close
